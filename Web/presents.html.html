@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Happiest 18th Birthday Jhamela!</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Inter:wght@300;400;600&family=Montserrat:wght@600&family=Poppins:wght@300;500&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --page-bg-1: #ffd2e6;
+      --page-bg-2: #ffedf7;
+      --accent: #d94b8a;
+      --card-bg: #fff7fb;
+      --muted: #6b6b6b;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0}
+    body{
+      font-family: Inter, system-ui, Arial;
+      background: linear-gradient(90deg,var(--page-bg-1),var(--page-bg-2));
+      display:flex;align-items:center;justify-content:center;padding:24px;
+      -webkit-font-smoothing:antialiased;
+      overflow-x:hidden;
+    }
+
+    /* Homepage Card */
+    .card-wrap{
+      width: min(1200px, 96%);
+      max-width: 1200px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(255,250,252,0.98));
+      border-radius:28px;
+      padding: 48px 28px;
+      box-shadow: 0 20px 50px rgba(20,10,20,0.08);
+      position:relative;
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    .panel{
+      background: #fff;
+      border-radius:20px;
+      padding:48px 36px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:18px;
+    }
+
+    h1.title{
+      font-family: 'Fredoka One', system-ui;
+      font-size: clamp(38px, 6vw, 64px);
+      color:#ff7db3;
+      margin:0;
+      letter-spacing:6px;
+      text-transform:uppercase;
+      -webkit-text-stroke: 3px rgba(217,75,138,0.18);
+      text-shadow: 0 6px 14px rgba(217,75,138,0.08);
+      user-select: none;
+    }
+    p.subtitle{
+      margin:0;
+      color:var(--muted);
+      font-size: clamp(12px, 1.3vw, 16px);
+      letter-spacing:3px;
+      text-transform:uppercase;
+    }
+
+    .cake-btn{
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding:0;
+      display:flex;align-items:center;justify-content:center;
+      margin-top:8px;
+    }
+    .cake-svg{ width:220px; height:auto; filter: drop-shadow(0 10px 30px rgba(0,0,0,0.08)); }
+    .footer-space{ height:18px }
+
+    /* Presents Section (initially hidden) */
+    .presents-section {
+      display:none;
+      position:absolute;
+      top:0; left:0;
+      width:100%; height:100%;
+      background:url('Images/3581af5726aaa964c13cdb3661342c77.jpg') no-repeat center center fixed;
+      background-size:cover;
+      justify-content:center;
+      align-items:center;
+      padding:40px;
+      overflow-y:auto;
+    }
+
+    .presents-container {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 20px;
+      padding: 40px;
+      text-align: center;
+      width: 90%;
+      max-width: 800px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+      animation: fadeIn 1s ease;
+    }
+
+    .presents-container h1 {
+      font-family: 'Montserrat', sans-serif;
+      color: #e74c7b;
+      font-size: 3rem;
+      margin-bottom: 10px;
+      letter-spacing: 2px;
+      text-shadow: 0 0 5px rgba(231,76,123,0.6);
+      animation: glow 2s infinite alternate;
+    }
+    @keyframes glow {
+      from { text-shadow: 0 0 5px rgba(231,76,123,0.6); }
+      to   { text-shadow: 0 0 20px rgba(231,76,123,0.8); }
+    }
+    .presents-container p {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 300;
+      color: #555;
+      margin-bottom: 30px;
+      font-size: 1.2rem;
+    }
+
+    .gifts {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .gift {
+      width: 180px;
+      height: 180px;
+      background: #ffe4f0;
+      border-radius: 15px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+      transition: transform 0.3s ease;
+      cursor: pointer;
+    }
+    .gift:hover { transform: scale(1.05); }
+    .gift img { width: 100px; height: auto; }
+
+    /* Popup Base */
+    .popup {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(255, 240, 245, 0.95);
+      backdrop-filter: blur(6px);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      overflow:hidden;
+      opacity:0;
+      transition: opacity 0.8s ease;
+    }
+    .popup.show { opacity:1; }
+
+    /* Floating Flowers Gallery */
+    .floating-gallery {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+    .floating-gallery img {
+      position: absolute;
+      border-radius: 18px;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.25);
+      animation-name: float;
+      animation-timing-function: ease-in-out;
+      animation-iteration-count: infinite;
+    }
+    @keyframes float {
+      0%   { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+      25%  { transform: translate(-20px, -30px) rotate(6deg); opacity: 0.95; }
+      50%  { transform: translate(15px, -40px) rotate(-4deg); opacity: 1; }
+      75%  { transform: translate(-10px, -25px) rotate(3deg); opacity: 0.97; }
+      100% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+    }
+
+    /* Frame Popup */
+    .frame-content {
+      background: #fff;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 0 40px rgba(233,76,123,0.8);
+      text-align: center;
+      animation: glowFrame 2s infinite alternate;
+    }
+    .frame-content img {
+      max-width: 450px;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    }
+    @keyframes glowFrame {
+      from { box-shadow: 0 0 20px rgba(233,76,123,0.5); }
+      to   { box-shadow: 0 0 40px rgba(233,76,123,0.9); }
+    }
+
+    /* Love Letter Popup */
+    .letter-content {
+      background: #fff0f5;
+      padding: 40px;
+      border-radius: 20px;
+      text-align: center;
+      box-shadow: 0 0 40px rgba(233,76,123,0.8);
+      max-width: 600px;
+      animation: glowLetter 2s infinite alternate;
+    }
+    .letter-content h2 {
+      font-family: 'Montserrat', sans-serif;
+      color: #e74c7b;
+      margin-bottom: 20px;
+      text-shadow: 0 0 10px rgba(231,76,123,0.6);
+    }
+    .letter-content p {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.2rem;
+      color: #333;
+      line-height: 1.6;
+    }
+    @keyframes glowLetter {
+      from { box-shadow: 0 0 20px rgba(233,76,123,0.5); }
+      to   { box-shadow: 0 0 40px rgba(233,76,123,0.9); }
+    }
+
+    /* Close Button */
+    .close-btn {
+      position:absolute;
+      top:20px; right:20px;
+      font-size: 2rem;
+      color: #fff;
+      background: #e74c7b;
+      border: none;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      z-index:2000;
+    }
+    .close-btn:hover { background: #c0395a; }
+  </style>
+</head>
+<body>
+
+  <!-- Homepage -->
+  <div class="card-wrap" id="homepage">
+    <div class="panel">
+      <h1 class="title">HAPPIEST BIRTHDAY MES</h1>
+      <p class="subtitle">CLICK THE CAKE FOR YOUR SURPRISE</p>
+      <button id="cakeBtn" class="cake-btn">
+        <!-- 🎂 Cake SVG -->
+        <svg class="cake-svg" viewBox="0 0 512 512">
+          <rect x="56" y="220" width="400" height="170" rx="20" fill="#fff5f8" />
+          <path d="M56 240c0 0 40-80 200-80s200 80 200 80v20H56v-20z" fill="#ffd6e8"/>
+          <path d="M256 128c-14 0-26 22-26 48s12 48 26 48 26-22 26-48-12-48-26-48z" fill="#fff2f6"/>
+          <g transform="translate(140,56)">
+            <rect x="46" y="30" width="12" height="60" rx="6" fill="#ffd2ea"/>
+            <rect x="106" y="10" width="12" height="80" rx="6" fill="#ffd2ea"/>
+            <rect x="166" y="30" width="12" height="60" rx="6" fill="#ffd2ea"/>
+            <path d="M52 26c0-8 6-18 12-18s12 10 12 18-6 10-12 10-12 0-12-10z" fill="#ffd86b" transform="translate(0,-20)"/>
+            <path d="M112 6c0-8 6-18 12-18s12 10 12 18-6 10-12 10-12 0-12-10z" fill="#ffd86b" transform="translate(0,-20)"/>
+            <path d="M172 26c0-8 6-18 12-18s12 10 12 18-6 10-12 10-12 0-12-10z" fill="#ffd86b" transform="translate(0,-20)"/>
+          </g>
+          <path d="M56 260c36 22 84-22 200-22s164 44 200 22v100H56V260z" fill="#ffc1db"/>
+        </svg>
+      </button>
+      <div class="footer-space"></div>
+    </div>
+  </div>
+
+  <!-- Presents Section -->
+  <div class="presents-section" id="presentsSection">
+    <div class="presents-container">
+      <h1>PRESENTS FOR YOU</h1>
+      <p>Click any gift to open</p>
+      <div class="gifts">
+        <div class="gift" id="flowersGift">
+          <img src="Images/29f8ada0158a4fc2d9e167106e489aa2.jpg" alt="Flowers">
+        </div>
+        <div class="gift" id="frameGift">
+          <img src="Images/df49b84bbecbb7737ad8b9cfa685f02e.jpg" alt="Frame">
+        </div>
+        <div class="gift" id="letterGift">
+          <img src="Images/1374667b44cc3ef592227fede3935154.jpg" alt="Love Letter">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Flowers Popup -->
+  <div class="popup" id="flowersPopup">
+    <button class="close-btn" onclick="closePopup('flowersPopup')">&times;</button>
+    <div class="floating-gallery">
+      <img src="Images/a284087e-5336-455e-8b98-66c84aee0c11.jpg" style="top:8%; left:12%; width:170px; animation-duration:12s;" />
+      <img src="Images/a10229ea-2e8e-42be-b947-97e4feedc351.jpg" style="top:18%; left:55%; width:150px; animation-duration:14s; animation-delay:1s;" />
+      <img src="Images/af32703351bee8647db9c75d1fa44e4e.jpg" style="top:25%; left:75%; width:160px; animation-duration:16s;" />
+      <img src="Images/34bec7021354f41b24b7487a8d436c66.jpg" style="top:65%; left:15%; width:180px; animation-duration:18s; animation-delay:2s;" />
+      <img src="Images/fad723482f01df7c46bae8f177359fcb.jpg" style="top:68%; left:72%; width:170px; animation-duration:20s;" />
+      <img src="Images/0a2a7aa64f0a176709d8187ba787c6dd.jpg" style="top:42%; left:38%; width:140px; animation-duration:15s;" />
+      <img src="Images/76b296964f3ab74256ed7a848afae462.jpg" style="top:30%; left:5%; width:130px; animation-duration:13s; animation-delay:1.5s;" />
+    </div>
+  </div>
+
+  <!-- Frame Popup -->
+  <div class="popup" id="framePopup">
+    <button class="close-btn" onclick="closeFramePopup()">&times;</button>
+    <div class="frame-content">
+      <img src="Images/90ebf0e2-b4fe-4e5f-acaa-7bfca3db3fa1.jpg" alt="Childhood Memory">
+    </div>
+  </div>
+
+  <!-- Love Letter Popup -->
+<div class="popup" id="letterPopup">
+  <button class="close-btn" onclick="closePopup('letterPopup')">&times;</button>
+  <div class="letter-content">
+    <h2>My Dearest Jhamela ❤️</h2>
+    <p>
+      Happiest Birthday Jhamela, today marks your 18th birthday,  
+      I’m so proud of you palagi. I want you to know that you’re doing great,  
+      you’re strong, pretty, and your presence is something I’ll always be grateful of.  
+    </p>
+    <p>
+      Thank you for being my source of motivation, happiness, and inspiration.  
+    </p>
+    <p>
+      As you step into this new chapter of your life,  
+      I want you to know that you have me okay?  
+      You can lean and depend on me bebehan. All ears ako palagi.  
+    </p>
+    <p>
+      It might be hard to accept that you’re not a minor anymore  
+      but we must move forward and keep going.  
+      I’m proud of you mes! Once again, happy happy birthday! 🎉💕  
+    </p>
+    <p style="text-align:right; font-weight:bold; margin-top:20px;">
+      Always yours,<br>
+      Justin Pogi 💌
+    </p>
+  </div>
+</div>
+
+<style>
+  .letter-content {
+    background: #fff;
+    padding: 40px;
+    max-width: 600px;
+    border-radius: 20px;
+    box-shadow: 0 0 40px rgba(233,76,123,0.6);
+    font-family: 'Poppins', sans-serif;
+    color: #444;
+    line-height: 1.8;
+    animation: fadeInLetter 1.2s ease;
+  }
+  .letter-content h2 {
+    font-family: 'Fredoka One', cursive;
+    color: #e74c7b;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  @keyframes fadeInLetter {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+
+
+  <!-- Audio -->
+  <audio id="songPlayer">
+    <source src="Images/Moving Closer Song - Never the Strangers  Lyrics.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="letterSong">
+    <source src="Images/Hmm Hm Hm Hm Hmm Hmm.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const cakeBtn = document.getElementById('cakeBtn');
+      const homepage = document.getElementById('homepage');
+      const presentsSection = document.getElementById('presentsSection');
+
+      // 🎂 Cake click -> Show Presents
+      cakeBtn.addEventListener('click', ()=>{
+        homepage.style.opacity = '0';
+        homepage.style.transform = 'scale(0.95)';
+        setTimeout(()=>{
+          homepage.style.display = 'none';
+          presentsSection.style.display = 'flex';
+        },800);
+      });
+
+      // 🌸 Flowers Gift
+      document.getElementById('flowersGift').onclick = function() {
+        const popup = document.getElementById('flowersPopup');
+        popup.style.display = 'flex';
+        setTimeout(()=> popup.classList.add('show'), 10);
+      };
+
+      // 🖼️ Frame Gift
+      document.getElementById('frameGift').onclick = function() {
+        const popup = document.getElementById('framePopup');
+        popup.style.display = 'flex';
+        setTimeout(()=> popup.classList.add('show'), 10);
+
+        const song = document.getElementById('songPlayer');
+        song.currentTime = 65; // start at chorus
+        song.play();
+      };
+
+      // 💌 Love Letter Gift
+      document.getElementById('letterGift').onclick = function() {
+        const popup = document.getElementById('letterPopup');
+        popup.style.display = 'flex';
+        setTimeout(()=> popup.classList.add('show'), 10);
+
+        const letterSong = document.getElementById('letterSong');
+        letterSong.currentTime = 0;
+        letterSong.play();
+      };
+    });
+
+    function closePopup(id) {
+      const popup = document.getElementById(id);
+      popup.classList.remove('show');
+      setTimeout(()=> popup.style.display = 'none', 500);
+    }
+
+    function closeFramePopup() {
+      const popup = document.getElementById('framePopup');
+      popup.classList.remove('show');
+      setTimeout(()=> popup.style.display = 'none', 500);
+
+      const song = document.getElementById('songPlayer');
+      song.pause();
+      song.currentTime = 0;
+    }
+
+    function closeLetterPopup() {
+      const popup = document.getElementById('letterPopup');
+      popup.classList.remove('show');
+      setTimeout(()=> popup.style.display = 'none', 500);
+
+      const song = document.getElementById('letterSong');
+      song.pause();
+      song.currentTime = 0;
+    }
+  </script>
+</body>
+</html>
